@@ -52,7 +52,9 @@ class Cards extends DbModel {
 	async withdraw(id, sum) {
 		const card = await this.get(id);
 		const newBalance = Number(card.balance) - Number(sum);
-
+		if (newBalance < 0) {
+			throw new ApplicationError('Not enough funds, aborting', 400);
+		}
 		await this._update({id}, {balance: newBalance});
 	}
 
