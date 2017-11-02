@@ -1,6 +1,8 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'emotion/react';
+import styled from 'react-emotion';
 
 const StyledTitle = styled.h2`
 	margin: 0 0 20px;
@@ -9,6 +11,10 @@ const StyledTitle = styled.h2`
 	color: #000;
 `;
 
+/**
+ * @param {Object} props
+ * @returns {JSX}
+ */
 const Title = ({children, className}) => (
 	<StyledTitle className={className}>
 		{children}
@@ -16,8 +22,8 @@ const Title = ({children, className}) => (
 );
 
 Title.propTypes = {
-	children: PropTypes.node,
-	className: PropTypes.string
+	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 };
 
 export default Title;

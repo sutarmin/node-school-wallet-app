@@ -1,7 +1,11 @@
-import React from 'react';
-import styled from 'emotion/react';
+// @flow
 
-const User = styled.div`
+import React from 'react';
+import styled from 'react-emotion';
+
+import {User} from '../types/types';
+
+const UserBlock = styled.div`
 	display: flex;
 	align-items: center;
 	font-size: 15px;
@@ -15,9 +19,20 @@ const Avatar = styled.img`
 	margin-right: 10px;
 `;
 
-export default () => (
-	<User>
-		<Avatar src='/assets/avatar.png' />
-		Samuel Johnson
-	</User>
+/**
+ * Инфомрация о пользователе
+ * @param {Object} props
+ * @returns {JSX}
+ */
+const UserInfo = ({user: {firstName, lastName, avatarUrl}}) => (
+	<UserBlock>
+		<Avatar src={avatarUrl || '/assets/avatar.png'} />
+		{`${firstName} ${lastName}`}
+	</UserBlock>
 );
+
+UserInfo.propTypes = {
+	user: User,
+};
+
+export default UserInfo;

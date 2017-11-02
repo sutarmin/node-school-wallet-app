@@ -1,5 +1,8 @@
 'use strict';
 
+const representTransaction = require('../../services/transactionRepresent');
+
 module.exports = async (ctx) => {
-  ctx.body = await ctx.transactionsModel.getAll();
+  const transactions = await ctx.transactionsModel.getAll();
+  ctx.body = representTransaction(transactions);
 };

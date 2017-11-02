@@ -30,8 +30,19 @@ class Transactions extends DbModel {
 	 * @return {Promise.<Object[]>}
 	 */
 	async getByCard(cardId) {
-		const item = await this.getBy({cardId});
+		const item = await this.getAllBy({cardId});
 		return item;
+	}
+
+	/**
+	 * Получить последнюю транзакцию
+	 * @returns {Promise.<Object>}
+	 */
+	async findLast() {
+		return this._MongooseModel
+			.find()
+			.sort({time: -1})
+			.limit(1);
 	}
 
 	/**

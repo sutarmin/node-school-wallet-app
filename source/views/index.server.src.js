@@ -1,18 +1,34 @@
+import 'babel-polyfill';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {extractCritical} from 'emotion-server';
 import serialize from 'serialize-javascript';
-import {App} from '../client/components';
+import thunk from 'redux-thunk';
+import {createStore, applyMiddleware, compose} from 'redux';
+import {Provider} from 'react-redux';
 
-module.exports = (appData) => {
-	const app = renderToString(<App data={appData} />);
+import reducer from '../client/reducers/app';
+import App from '../client/components/App';
+
+module.exports = (preloadedState) => {
+	const store = createStore(
+		reducer,
+		preloadedState,
+		compose(applyMiddleware(thunk))
+	);
+	const app = renderToString(
+		<Provider store={store}>
+			<App />
+		</Provider>
+	);
 	const {html, ids, css} = extractCritical(app);
-	const viewData = `window.__data=${serialize({ids, appData})};`;
+	const state = store.getState();
+	const viewData = `window.__data=${serialize({ids, state})};`;
 
 	return (
 		<html>
 			<head>
-				<meta charset='utf-8' />
+				<meta charSet='utf-8' />
 				<title>Node School App</title>
 				<link rel='shortcut icon' href='/public/favicon.ico' />
 				<link rel='stylesheet' href='index.css' />

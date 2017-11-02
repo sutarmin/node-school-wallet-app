@@ -1,9 +1,13 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'emotion/react';
+import styled from 'react-emotion';
 import moment from 'moment';
 
-import {Island} from './';
+import Island from './Island';
+import HistoryGroup from './HistoryGroup';
+import {Transaction} from '../types/types';
 
 const HistoryLayout = styled(Island)`
 	width: 530px;
@@ -15,18 +19,6 @@ const HistoryLayout = styled(Island)`
 	flex-direction: column;
 `;
 
-const HistoryEmpty = styled.div`
-	margin: 10px 0 10px 12px;
-`
-
-const HistoryTitle = styled.div`
-	padding-left: 12px;
-	color: rgba(0, 0, 0, 0.4);
-	font-size: 15px;
-	line-height: 30px;
-	text-transform: uppercase;
-`;
-
 const HistoryContent = styled.div`
 	color: rgba(0, 0, 0, 0.4);
 	font-size: 15px;
@@ -34,115 +26,58 @@ const HistoryContent = styled.div`
 	text-transform: uppercase;
 `;
 
-const HistoryItem = styled.div`
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	height: 74px;
-	font-size: 15px;
-	white-space: nowrap;
-	min-height: 74px;
-
-	&:nth-child(even) {
-		background-color: #fff;
-	}
-
-	&:nth-child(odd) {
-		background-color: rgba(255, 255, 255, 0.72);
-	}
+const HistoryEmpty = styled.div`
+	margin: 10px 0 10px 12px;
 `;
 
-const HistoryItemIcon = styled.div`
-	width: 50px;
-	height: 50px;
-	border-radius: 25px;
-	background-color: #159761;
-	background-image: url(${({bankSmLogoUrl}) => bankSmLogoUrl});
-	background-size: contain;
-	background-repeat: no-repeat;
+const Loading = styled.img`
+	width: 42px;
+	height: 42px;
+	margin: 0 auto;
+	padding: 10px;
 `;
 
-const HistoryItemTitle = styled.div`
-	width: 290px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-`;
-
-const HistoryItemTime = styled.div`
-	width: 50px;
-`;
-
-const HistoryItemSum = styled.div`
-	width: 50px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-weight: bold;
-`;
-
-const History = ({cardHistory}) => {
-	const getHistoryItemTitle = (item) => {
-		let typeTitle = '';
-
-		switch (item.type) {
-			case 'paymentMobile': {
-				typeTitle = 'Оплата телефона';
-				break;
-			}
-			case 'prepaidCard': {
-				typeTitle = 'Пополнение с карты';
-				break;
-			}
-			case 'withdrawCard': {
-				typeTitle = 'Перевод на карту';
-				break;
-			}
-			default: {
-				typeTitle = 'Операция';
-			}
+/**
+ * История транзакций
+ * @param {Objects} props
+ * @returns {JSX}
+ */
+const History = ({cardTransactions, loading}) => {
+	moment.locale('ru');
+	const today = moment().format('L');
+	const mappedTransactions = cardTransactions.reduce((map, item) => {
+		const itemDate = moment(item.time, moment.ISO_8601);
+		let key = itemDate.format('L');
+		if (itemDate.format('L') === today) {
+			key = 'Сегодня';
 		}
+		const value = map.get(key) || [];
+		value.push(item);
+		map.set(key, value);
 
-		return `${typeTitle}: ${item.data.cardNumber || item.data.phoneNumber}`;
-	};
-	const getContent = (list) => {
-		const content = list.reduce((result, item, index) => {
-			const historyItemDate = moment(item.time, moment.ISO_8601);
-			const today = moment().format('L');
-			const isTodayHistoryItem = historyItemDate.format('L') === today;
+		return map;
+	}, new Map());
 
-			if (isTodayHistoryItem) {
-				result.push((
-					<HistoryItem key={index}>
-						<HistoryItemIcon bankSmLogoUrl={item.card.theme.bankSmLogoUrl} />
-						<HistoryItemTitle>
-							{getHistoryItemTitle(item)}
-						</HistoryItemTitle>
-						<HistoryItemTime>
-							{historyItemDate.format('HH:mm')}
-						</HistoryItemTime>
-						<HistoryItemSum>
-							{`${item.sum} ₽`}
-						</HistoryItemSum>
-					</HistoryItem>
-				));
-			}
-
-			return result;
-		}, []);
-		return content.length === 0
-			? <HistoryContent><HistoryEmpty>История операций пуста</HistoryEmpty></HistoryContent>
-			: <HistoryContent>{content}</HistoryContent>;
-	};
+	let content = <HistoryContent><HistoryEmpty>История операций пуста</HistoryEmpty></HistoryContent>
+	if (mappedTransactions.size) {
+		content = Array.from(mappedTransactions).map(([title, transactions]) => (
+			<HistoryContent key={title}>
+				<HistoryGroup title={title} transactions={transactions} />
+			</HistoryContent>
+		));
+	}
 
 	return (
 		<HistoryLayout>
-			<HistoryTitle>Сегодня</HistoryTitle>
-			{getContent(cardHistory)}
+			{content}
+			{loading ? <Loading src='/assets/loading-bubbles.svg' /> : ''}
 		</HistoryLayout>
 	);
 };
 
 History.propTypes = {
-	cardHistory: PropTypes.arrayOf(PropTypes.object).isRequired
+	cardTransactions: PropTypes.arrayOf(Transaction),
+	loading: PropTypes.bool.isRequired,
 };
 
 export default History;

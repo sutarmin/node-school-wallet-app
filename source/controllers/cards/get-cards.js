@@ -1,5 +1,8 @@
 'use strict';
 
+const representCard = require('../../services/cardRepesent');
+
 module.exports = async (ctx) => {
-	ctx.body = await ctx.cardsModel.getAll();
+	const cards = await ctx.cardsModel.getAll();
+	ctx.body = cards.map(representCard);
 };

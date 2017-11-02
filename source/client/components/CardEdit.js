@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'emotion/react';
+import styled from 'react-emotion';
 
 const CardEditIcon = styled.div`
 	width: 24px;
@@ -10,17 +10,20 @@ const CardEditIcon = styled.div`
 	right: -12px;
 	background-image: url('/assets/cards-delete.svg');
 	cursor: pointer;
-	display: ${({editable}) => (editable ? 'block' : 'none')};
+	display: ${({editable}) => (editable ? 'block' : 'none')}
 `;
 
-const CardEdit = ({editable, onChangeBarMode, id}) => (
-	<CardEditIcon editable={editable} onClick={(event) => onChangeBarMode(event, id)} />
+/**
+ * Иконка редактирования
+ * @param {Object} props
+ */
+const CardEdit = ({onClick, editable}) => (
+	<CardEditIcon onClick={onClick} editable={editable} />
 );
 
 CardEdit.propTypes = {
+	onClick: PropTypes.func.isRequired,
 	editable: PropTypes.bool,
-	onChangeBarMode: PropTypes.func,
-	id: PropTypes.number
 };
 
 export default CardEdit;

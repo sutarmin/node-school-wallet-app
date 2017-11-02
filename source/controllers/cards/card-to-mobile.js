@@ -1,5 +1,7 @@
 'use strict';
 
+const representTransaction = require('../../services/transactionRepresent');
+
 const commission = 3;
 
 module.exports = async (ctx) => {
@@ -19,5 +21,5 @@ module.exports = async (ctx) => {
 	});
 
 	ctx.status = 200;
-	ctx.body = transaction;
+	ctx.body = representTransaction(transaction);
 };

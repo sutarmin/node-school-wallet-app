@@ -1,5 +1,7 @@
 'use strict';
 
+const representTransaction = require('../../services/transactionRepresent');
+
 module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 
@@ -23,5 +25,5 @@ module.exports = async (ctx) => {
 	});
 
 	ctx.status = 200;
-	ctx.body = transaction;
+	ctx.body = representTransaction(transaction);
 };

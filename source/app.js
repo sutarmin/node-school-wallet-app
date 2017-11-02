@@ -3,15 +3,12 @@
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
-const path = require('path');
 const Koa = require('koa');
 const serve = require('koa-static');
 const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser')();
 
 const logger = require('../libs/logger')('app');
-
-const {renderToStaticMarkup} = require('react-dom/server');
 
 const getCardsController = require('./controllers/cards/get-cards');
 const createCardController = require('./controllers/cards/create');
@@ -21,6 +18,7 @@ const createTransactionsController = require('./controllers/transactions/create'
 const cardToCard = require('./controllers/cards/card-to-card');
 const cardToMobile = require('./controllers/cards/card-to-mobile');
 const mobileToCard = require('./controllers/cards/mobile-to-card');
+const index = require('./controllers/index');
 
 const errorController = require('./controllers/error');
 
@@ -36,37 +34,10 @@ mongoose.Promise = global.Promise;
 
 const app = new Koa();
 
-function getView(viewId) {
-	const viewPath = path.resolve(__dirname, 'views', `${viewId}.server.js`);
-	delete require.cache[require.resolve(viewPath)];
-	return require(viewPath);
-}
-
-async function getData(ctx) {
-	const user = {
-		login: 'samuel_johnson',
-		name: 'Samuel Johnson'
-	};
-	const cards = await ctx.cardsModel.getAll();
-	const transactions = await ctx.transactionsModel.getAll();
-
-	return {
-		user,
-		cards,
-		transactions
-	};
-}
-
 // Сохраним параметр id в ctx.params.id
 router.param('id', (id, ctx, next) => next());
 
-router.get('/', async (ctx) => {
-	const data = await getData(ctx);
-	const indexView = getView('index');
-	const indexViewHtml = renderToStaticMarkup(indexView(data));
-
-	ctx.body = indexViewHtml;
-});
+router.get('/', index);
 
 router.get('/cards/', getCardsController);
 router.post('/cards/', createCardController);

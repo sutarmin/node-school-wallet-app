@@ -1,7 +1,11 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'emotion/react';
-import {Title, UserInfo} from './';
+import styled from 'react-emotion';
+
+import Title from './Title';
+import UserInfo from './UserInfo';
+import {Card, User} from '../types/types';
 
 const HeaderLayout = styled.header`
 	display: flex;
@@ -22,6 +26,11 @@ const BalanceSum = styled.span`
 	font-weight: bold;
 `;
 
+/**
+ * Шапка страницы
+ * @param {Object} props
+ * @returns {JSX}
+ */
 const Header = ({activeCard, user}) => (
 	<HeaderLayout>
 		<Balance>
@@ -33,14 +42,8 @@ const Header = ({activeCard, user}) => (
 );
 
 Header.propTypes = {
-	activeCard: PropTypes.shape({
-		bankName: PropTypes.string.isRequired,
-		balance: PropTypes.number.isRequired
-	}),
-	user: PropTypes.shape({
-		login: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired
-	})
+	activeCard: Card,
+	user: User,
 };
 
 export default Header;

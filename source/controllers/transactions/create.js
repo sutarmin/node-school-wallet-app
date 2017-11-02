@@ -1,7 +1,9 @@
 'use strict';
 
-const ApplicationError = require('../../../libs/application-error');
 const _ = require('lodash');
+
+const ApplicationError = require('../../../libs/application-error');
+const representTransaction = require('../../services/transactionRepresent');
 
 const allowedTypes = ['prepaidCard', 'paymentMobile', 'card2Card'];
 const requiredFields = ['sum', 'type', 'data'];
@@ -37,5 +39,5 @@ module.exports = async (ctx) => {
 
 	const newTransaction = await ctx.transactionsModel.create(transaction);
 	ctx.status = 201;
-	ctx.body = newTransaction;
+	ctx.body = representTransaction(newTransaction);
 };
