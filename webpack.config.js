@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 function getExternals() {
 	return fs.readdirSync('node_modules')
@@ -38,7 +39,10 @@ module.exports = [
 			path: path.resolve(__dirname, 'public')
 		},
 		plugins: [
-			new ExtractTextPlugin('[name].css')
+			new ExtractTextPlugin('[name].css'),
+			new CopyWebpackPlugin([
+				'./source/client/service-worker.js'
+			])
 		]
 	},
 	{
