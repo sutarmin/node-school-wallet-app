@@ -1,4 +1,3 @@
-Change!
 # Приложение школы Node.js «Кошелёк» [![Build Status](https://travis-ci.org/sutarmin/node-school-wallet-app.svg?branch=master)](https://travis-ci.org/sutarmin/node-school-wallet-app)
 
 ## Install
