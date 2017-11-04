@@ -41,7 +41,8 @@ module.exports = [
 		plugins: [
 			new ExtractTextPlugin('[name].css'),
 			new CopyWebpackPlugin([
-				'./source/client/service-worker.js'
+				'./source/client/service-worker/sw.js',
+				'./source/client/service-worker/sw-cache-polyfill.js'
 			])
 		]
 	},
