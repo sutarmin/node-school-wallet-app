@@ -115,6 +115,13 @@ class App extends Component {
 	}
 
 	/**
+	 * Создаем ws подключение
+	 */
+	componentDidMount() {
+	
+	}
+
+	/**
 	 * Обработчик переключения карты
 	 *
 	 * @param {Number} activeCardIndex индекс выбранной карты
@@ -210,7 +217,7 @@ class App extends Component {
 		} = this.state;
 		const activeCard = cardsList[activeCardIndex];
 
-		let inactiveCardsList, 
+		let inactiveCardsList,
 			filteredHistory,
 			workspace;
 		if (activeCard) {

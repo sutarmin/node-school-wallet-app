@@ -5,6 +5,7 @@ const http = require('http');
 const https = require('https');
 const path = require('path');
 const Koa = require('koa');
+const websockify = require('koa-websocket');
 const serve = require('koa-static');
 const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser')();
@@ -39,6 +40,7 @@ mongoose.Promise = global.Promise;
 	await migrator();
 
 	const app = new Koa();
+	const wsApp = websockify(new Koa());
 
 	function getView(viewId) {
 		const viewPath = path.resolve(__dirname, 'views', `${viewId}.server.js`);
@@ -57,6 +59,14 @@ mongoose.Promise = global.Promise;
 			transactions
 		};
 	}
+
+	//Запустим wsServes
+	wsApp.ws.use(router.all('/ws', (ctx) => {
+		ctx.websocket.on('message', (message) => {
+			ctx.websocket.send(message);
+			console.log('onmessage', message);
+		});
+	}).routes());
 
 	// Сохраним параметр id в ctx.params.id
 	router.param('id', (id, ctx, next) => next());
@@ -110,10 +120,10 @@ mongoose.Promise = global.Promise;
 
 	app.keys = ['your-session-secret', 'another-session-secret'];
 	app.use(convert(session({
-	store: new MongooseStore()
+		store: new MongooseStore()
 	})));
 
-	process.env.HOSTNAME = "https://127.0.0.1:3000";	
+	process.env.HOSTNAME = "https://127.0.0.1:3000";
 	// authentication
 	require('../libs/auth');
 	const passport = require('koa-passport');
@@ -148,6 +158,9 @@ mongoose.Promise = global.Promise;
 	};
 
 	const LISTEN_PORT = 3000;
+	const WS_LISTEN_PORT = 3001;
+
+	wsApp.listen(WS_LISTEN_PORT);
 
 	if (!module.parent && process.env.NODE_HTTPS) {
 		const protocolSecrets = {
