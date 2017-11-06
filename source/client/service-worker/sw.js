@@ -1,47 +1,37 @@
 /* eslint-disable */
 importScripts('/sw-cache-polyfill.js');
+importScripts('/AssetsManager.js');
 
-const cacheVersion = 1;
-const currentCache = {
-	versionWhitelist: [],
-	name: `offline v${cacheVersion}`
-};
-// const offlineUrl = 'offline-page.html';
+const assetsManager = new AssetsManager();
 
 self.addEventListener('install', event => {
-	// event.waitUntil(caches.open(currentCache.offline).then((cache) => {
-	// 	return cache.addAll([
-	// 		'./img/offline.svg',
-	// 		offlineUrl
-	// 	]);
-	// }));
+	event.waitUntil(
+		assetsManager.addAllToCache()
+	);
 });
 
 self.addEventListener('activate', event => {
 	event.waitUntil(
-		deleteObsoleteCache()
+		assetsManager.removeNotInAssets()
 	);
 });
 
 self.addEventListener('fetch', event => {
 	console.log(event.request.url);
+	event.respondWith(
+		tryFetch(event.request)
+	);
 });
 
-function deleteObsoleteCache() {
-	return caches.keys().then(keys => {
-		const keysToDelete = keys.filter(key => {
-			if (key === currentCache.name) {
-				return false;
-			}
+self.addEventListener('message', event => {
+	console.log('SW says:', event.data);
+});
 
-			if (currentCache.versionWhitelist.indexOf(key) !== -1) {
-				return false;
-			}
-
-			return true;
-		})
-
-		const deletePromises = keysToDelete.map(key => caches.delete(key));
-		return Promise.all(deletePromises);
-	});
+function tryFetch(request) {
+	return fetch(request)
+		.catch(error => {
+			//are we offline? 
+			//	console.log('[SW fetch error] ', error);
+			return caches.match(request);
+		});
 }

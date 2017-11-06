@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SwCachePlugin = require('sw-cache-plugin');
 
 function getExternals() {
 	return fs.readdirSync('node_modules')
@@ -36,14 +37,20 @@ module.exports = [
 		},
 		output: {
 			filename: '[name].js',
-			path: path.resolve(__dirname, 'public')
+			path: path.resolve(__dirname, 'public'),
+			publicPath: '/'
 		},
 		plugins: [
 			new ExtractTextPlugin('[name].css'),
 			new CopyWebpackPlugin([
 				'./source/client/service-worker/sw.js',
 				'./source/client/service-worker/sw-cache-polyfill.js'
-			])
+			]),
+			new SwCachePlugin({
+				cacheName: 'offline v1',
+				ignore: [/.*\.map$/, /^sw.js$/, /^sw-cache-polyfill.js$/],
+				include: ['/']
+			})
 		]
 	},
 	{

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef,no-console */
+
 export default function registerServiceWorker() {
 	if ('serviceWorker' in navigator) {
 		navigator.serviceWorker.register('/sw.js')
@@ -8,6 +10,7 @@ export default function registerServiceWorker() {
 			});
 
 		navigator.serviceWorker.ready.then((registration) => {
+			// navigator.serviceWorker.controller.postMessage('Ping');
 			console.log('Service Worker Ready');
 		});
 	}
