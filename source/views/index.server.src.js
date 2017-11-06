@@ -14,7 +14,7 @@ module.exports = (appData) => {
 			<head>
 				<meta charset='utf-8' />
 				<title>Node School App</title>
-				<link rel='shortcut icon' href='/public/favicon.ico' />
+				<link rel='shortcut icon' href='/favicon.ico' />
 				<link rel='stylesheet' href='index.css' />
 				<style
 					type='text/css'
