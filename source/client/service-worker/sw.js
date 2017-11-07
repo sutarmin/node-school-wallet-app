@@ -1,52 +1,59 @@
 /* eslint-disable */
 importScripts('/sw-cache-polyfill.js');
-//importScripts('/AssetsManager.js');
 
-//const assetsManager = new AssetsManager();
+// fields
 const cacheName = 'offline v1.0';
-//const cacheEntries = [];
 
-self.addEventListener('install', event => {
-	// event.waitUntil(
-	// 	cacheAll()
-	// );
+let isOnline = true;
+
+
+// events
+self.addEventListener('install', function (event) {
+	event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', event => {
-	event.waitUntil(
+	event.waitUntil(Promise.all([
+		self.clients.claim(),
 		removeObsoleteCache()
-	);
+	]));
 });
 
 self.addEventListener('fetch', event => {
 	event.respondWith(
-		fetchOrGetFromCache(event.request)
+		fetchRequestOrGetFromCache(event.request)
 	);
 });
 
 self.addEventListener('message', event => {
-	console.log('SW says:', event.data);
+	event.waitUntil(
+		dispatchCommand(event)
+	);
 });
 
-function fetchOrGetFromCache(request) {
+
+// functions
+function fetchRequestOrGetFromCache(request) {
 	return fetch(request)
 		.then(response => {
-			return caches.open(cacheName)
-				.then(cache => {
-					cache.put(request, response.clone())
-					return response;
+			return changeOnlineStatus(true)
+				.then(() => {
+					if (request.method !== "GET") {
+						return response;
+					}
+
+					return caches.open(cacheName)
+						.then(cache => {
+							cache.put(request, response.clone())
+							return response;
+						});
 				});
 		})
 		.catch(error => {
-			//are we offline now? 
-			return getFromCache(request);
+			return changeOnlineStatus(false)
+				.then(() => caches.open(cacheName))
+				.then(cache => cache.match(request));
 		});
-}
-
-
-function getFromCache(request) {
-	return caches.open(cacheName)
-		.then(cache => cache.match(request));
 }
 
 function removeObsoleteCache() {
@@ -58,9 +65,43 @@ function removeObsoleteCache() {
 		});
 };
 
-// function cacheAll() {
-// 	return caches.open(cacheName)
-// 		.then(cache => {
-// 			return cache.addAll(cacheEntries);
-// 		});
-// };
+function dispatchCommand(event) {
+	const command = event.data;
+	switch (command.type) {
+		case 'getStatus':
+			const ports = event.ports;
+			if (ports.length > 0) {
+				const statusInfo = {
+					isOnline
+				};
+				ports[0].postMessage(statusInfo);
+			}
+			return Promise.resolve();
+			break;
+		default:
+			return Promise.resolve();
+			break;
+	}
+}
+
+function changeOnlineStatus(value) {
+	if (isOnline !== value) {
+		isOnline = value;
+		console.log('[SW] Online status changed: ', value);
+		const statusInfo = {
+			isOnline
+		};
+		return broadcastClients(statusInfo);
+	}
+
+	return Promise.resolve();
+}
+
+function broadcastClients(message) {
+	return clients.matchAll()
+		.then(clients => {
+			for (let client of clients) {
+				client.postMessage(message);
+			}
+		});
+}

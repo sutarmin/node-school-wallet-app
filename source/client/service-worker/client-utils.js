@@ -1,26 +1,23 @@
 /* eslint-disable no-undef,no-console,import/prefer-default-export */
 
-export function registerServiceWorker() {
+export function sendGetStatusCommand() {
+	if (!navigator.serviceWorker.controller) {
+		return Promise.reject(new Error('serviceWorker.controller is not created yet!'));
+	}
+
 	return new Promise((resolve, reject) => {
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/sw.js')
-				.then((registration) => {
-					console.log('[Service Worker]: Registered');
-					resolve();
-				}, (reason) => {
-					console.log('[Service Worker]: Registration failed', reason);
-					reject(reason);
-				});
-		} else {
-			reject(new Error('NOT SUPPORTED!'));
-		}
+		const channel = new MessageChannel();
+		channel.port1.onmessage = (event) => {
+			if (event.data.error) {
+				reject(event.data.error);
+			} else {
+				resolve(event.data);
+			}
+		};
+
+		const command = {
+			type: 'getStatus'
+		};
+		navigator.serviceWorker.controller.postMessage(command, [channel.port2]);
 	});
 }
-
-// export function sendCacheAllCommand() {
-// 	if ('serviceWorker' in navigator) {
-// 		navigator.serviceWorker.controller.postMessage({
-// 			type: 'cacheAll'
-// 		});
-// 	}
-// }

@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const SwCachePlugin = require('sw-cache-plugin');
 
 function getExternals() {
 	return fs.readdirSync('node_modules')
@@ -45,12 +44,7 @@ module.exports = [
 			new CopyWebpackPlugin([
 				'./source/client/service-worker/sw.js',
 				'./source/client/service-worker/sw-cache-polyfill.js'
-			]),
-			// new SwCachePlugin({
-			// 	cacheName: 'offline v1.0',
-			// 	ignore: [/.*\.map$/, /^sw.js$/, /^sw-cache-polyfill.js$/],
-			// 	include: ['/']
-			// })
+			])
 		]
 	},
 	{
