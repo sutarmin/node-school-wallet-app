@@ -12,7 +12,7 @@ module.exports = async (ctx) => {
 	const sourceCard = await ctx.cardsModel.get(cardId);
 	const targetCard = await ctx.cardsModel.get(target);
 
-	const transaction = await ctx.transactionsModel.create({
+	const sourceTransaction = await ctx.transactionsModel.create({
 		cardId: sourceCard.id,
 		type: 'withdrawCard',
 		data: {
@@ -22,6 +22,16 @@ module.exports = async (ctx) => {
 		sum
 	});
 
+	const targetTransaction = await ctx.transactionsModel.create({
+		cardId: targetCard.id,
+		type: 'withdrawCard',
+		data: {
+			cardNumber: sourceCard.cardNumber
+		},
+		time: new Date().toISOString(),
+		sum: -sum
+	});
+
 	ctx.status = 200;
-	ctx.body = transaction;
+	ctx.body = sourceTransaction;
 };

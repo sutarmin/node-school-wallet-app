@@ -19,6 +19,7 @@ const WithdrawLayout = styled(Island)`
 	flex-direction: column;
 	align-items: center;
 	opacity: ${({isOffline}) => (isOffline ? '0.1' : '1')};
+	pointer-events: ${({isOffline}) => (isOffline ? 'none' : 'all')};;
 `;
 
 const InputField = styled.div`
