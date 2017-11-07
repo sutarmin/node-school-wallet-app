@@ -199,7 +199,8 @@ class App extends Component {
 	 * @returns {JSX}
 	 */
 	render() {
-		console.log('isOffline = ', this.props.isOffline);
+		const {isOffline} = this.props;
+		console.log('isOffline = ', isOffline);
 		const {
 			cardsList,
 			activeCardIndex,
@@ -223,6 +224,7 @@ class App extends Component {
 				<Workspace>
 					<History cardHistory={filteredHistory} />
 					<Prepaid
+						isOffline={isOffline}
 						activeCard={activeCard}
 						inactiveCardsList={inactiveCardsList}
 						onCardChange={(newActiveCardIndex) => this.onCardChange(newActiveCardIndex)}
@@ -256,7 +258,7 @@ class App extends Component {
 					onEditChange={() => this.onEditChange(isCardsEditable)}
 					onAppendModeSwitch={(isCardAppending) => this.onAppendModeSwitch(isCardAppending)} />
 				<CardPane>
-					<Header activeCard={activeCard} user={this.props.data.user} />
+					<Header activeCard={activeCard} user={this.props.data.user} isOffline={isOffline} />
 					{ workspace }
 				</CardPane>
 				<CardAdd
