@@ -199,7 +199,6 @@ class App extends Component {
 	 */
 	render() {
 		const {isOffline} = this.props;
-		console.log('isOffline = ', isOffline);
 		const {
 			cardsList,
 			activeCardIndex,
