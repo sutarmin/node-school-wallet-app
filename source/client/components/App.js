@@ -199,6 +199,7 @@ class App extends Component {
 	 * @returns {JSX}
 	 */
 	render() {
+		console.log('isOffline = ', this.props.isOffline);
 		const {
 			cardsList,
 			activeCardIndex,

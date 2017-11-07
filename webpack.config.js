@@ -15,6 +15,7 @@ function getExternals() {
 
 module.exports = [
 	{
+		devtool: 'source-map',
 		entry: {
 			index: './source/views/index.src.js'
 		},

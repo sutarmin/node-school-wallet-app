@@ -5,14 +5,14 @@ import serialize from 'serialize-javascript';
 import {App} from '../client/components';
 
 module.exports = (appData) => {
-	const app = renderToString(<App data={appData} />);
+	const app = renderToString(<App data={appData} isOffline={false} />);
 	const {html, ids, css} = extractCritical(app);
 	const viewData = `window.__data=${serialize({ids, appData})};`;
 
 	return (
 		<html>
 			<head>
-				<meta charset='utf-8' />
+				<meta charSet='utf-8' />
 				<title>Node School App</title>
 				<link rel='shortcut icon' href='/favicon.ico' />
 				<link rel='stylesheet' href='index.css' />
