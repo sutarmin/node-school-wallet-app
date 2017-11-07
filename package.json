@@ -12,7 +12,7 @@
     "watch:https": "NODE_HTTPS=1 nodemon --watch source ./source/app.js",
     "test": "jest",
     "win:start:https": "set NODE_HTTPS=1 && nodemon --watch source ./source/app.js",
-    "win:start:production": "set NODE_HTTPS=1 && set NODE_ENV=production&& npm start"    
+    "win:start:production": "set NODE_HTTPS=1 && set NODE_ENV=production&& npm start"
   },
   "repository": {
     "type": "git",

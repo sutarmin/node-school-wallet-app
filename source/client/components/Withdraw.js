@@ -156,8 +156,6 @@ Withdraw.propTypes = {
 	activeCard: PropTypes.shape({
 		id: PropTypes.number
 	}).isRequired,
-	inactiveCardsList: PropTypes.arrayOf(PropTypes.object).isRequired,
-	onTransaction: PropTypes.func.isRequired,
 	isOffline: PropTypes.bool.isRequired
 };
 

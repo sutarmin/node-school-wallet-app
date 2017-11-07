@@ -15,6 +15,10 @@ const NumberInput = styled.input`
     max-width: 240px;
     margin-bottom: 10px;
     border-radius: 4px;
+
+    &.invalid {
+        box-shadow: 0 0 5px rgba(255,0,0,1);
+    }
 `;
 
 const CardLayout = styled.div`
@@ -47,46 +51,70 @@ background-position-x: right;
 
 class CardNumberInput extends Component {
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			cardNumber: props.initialValue
-		};
-	}
+    constructor(props) {
+        super(props);
+        this.state = {
+            cardNumber: props.initialValue,
+            isValid: true
+        }
+    }
 
-	handleChange(e) {
-		let cardNumber = e.target.value.replace(/\D/g, '');
-		if (cardNumber.length <= 16) {
-			this.setState({
-				cardNumber
-			});
-		}
-	}
+    handleChange(e) {
+        let cardNumber = e.target.value.replace(/\D/g, '');
+        if (cardNumber.length <= 16) {
+            this.setState({
+                cardNumber,
+                isValid: true
+            });
+        }
+        this.props.onChange(cardNumber);
+    }
 
-	render() {
-		const {
-			brandLogo,
-			bankLogo,
-			backgroundColor
-		} = new CardInfo(this.state.cardNumber, {
-			banksLogosPath: '/assets/',
-			brandsLogosPath: '/assets/'
-		});
-		return (
-			<CardLayout
-				isBankKnown={false}
-				bgColor={backgroundColor}>
-				<CardLogo url={bankLogo} />
-				<NumberInput
-					onChange={(e) => {
-						this.handleChange(e);
-					}}
-					value={bankUtils.formatCardNumber(this.state.cardNumber)} />
-				<CardType url={brandLogo} />
+    handleBlur(e) {
+        const {cardNumber} = this.state;
+        if (cardNumber === "") {
+            this.setState({
+                cardNumber,
+                isValid: true
+            });
+        }
+        if (bankUtils.validateCardNumber(cardNumber)) {
+            this.setState({
+                cardNumber,
+                isValid: true
+            });
+        }
+        this.setState({
+            cardNumber,
+            isValid: false
+        });
+    }
 
-			</CardLayout>
-		);
-	}
+    render() {
+        const {
+            brandLogo,
+            bankLogo,
+            backgroundColor
+        } = new CardInfo(this.state.cardNumber, {
+            banksLogosPath: '/assets/',
+            brandsLogosPath: '/assets/'
+        });
+        return (
+            <CardLayout
+                isBankKnown={false}
+                bgColor={backgroundColor}>
+                <CardLogo url={bankLogo} />
+                <NumberInput className={this.state.isValid ? "" : "invalid"}
+                    onChange={(e) => {this.handleChange(e)}} 
+                    value={bankUtils.formatCardNumber(this.state.cardNumber)}
+                    onBlur={(e) => {this.handleBlur(e)}}
+                    onEnter={(e) => {this.setState({cardNumber: this.state.cardNumber, isValid: true})}}
+                />
+                <CardType url={brandLogo} />
+                
+            </CardLayout>
+        );
+    }
 }
 
 CardNumberInput.propTypes = {

@@ -231,7 +231,7 @@ class App extends Component {
 						isOffline={isOffline}
 						activeCard={activeCard}
 						onTransaction={() => this.onTransaction()} />
-					<Withdraw isOffline={isOffline} />
+					<Withdraw isOffline={isOffline} activeCard={activeCard}  />
 				</Workspace>
 			);
 		}
