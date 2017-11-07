@@ -16,6 +16,7 @@ const PrepaidLayout = styled(Island)`
 	align-items: center;
 	background-color: #353536;
 	opacity: ${({isOffline}) => (isOffline ? '0.1' : '1')};
+	pointer-events: ${({isOffline}) => (isOffline ? 'none' : 'all')};
 `;
 
 const PrepaidTitle = styled(Title)`

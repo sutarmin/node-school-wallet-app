@@ -9,6 +9,7 @@ const MobilePaymentLayout = styled(Island)`
 	width: 440px;
 	background: #108051;
 	opacity: ${({isOffline}) => (isOffline ? '0.1' : '1')};
+	pointer-events: ${({isOffline}) => (isOffline ? 'none' : 'all')};;
 `;
 
 const MobilePaymentTitle = styled(Title)`
