@@ -1,3 +1,5 @@
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import html5Ws from 'html5-websocket';
 import React, {Component} from 'react';
 import styled from 'emotion/react';
 import {injectGlobal} from 'emotion';
@@ -102,6 +104,10 @@ class App extends Component {
 		const data = props.data;
 		const cardsList = App.prepareCardsData(data.cards);
 		const cardHistory = App.prepareHistory(cardsList, data.transactions);
+		const rWs = new ReconnectingWebSocket(`wss://localhost:3001/${data.user.id}`, undefined, {
+			constructor: html5Ws,
+		});
+		rWs.onmessage = (message) => console.log(message);
 
 		this.state = {
 			cardsList,
@@ -112,13 +118,6 @@ class App extends Component {
 			isCardRemoving: false,
 			isCardsEditable: false
 		};
-	}
-
-	/**
-	 * Создаем ws подключение
-	 */
-	componentDidMount() {
-	
 	}
 
 	/**

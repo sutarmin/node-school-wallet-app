@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const url = require('url');
 const http = require('http');
 const https = require('https');
 const path = require('path');
@@ -23,6 +24,8 @@ const cardToCard = require('./controllers/cards/card-to-card');
 const cardToMobile = require('./controllers/cards/card-to-mobile');
 const mobileToCard = require('./controllers/cards/mobile-to-card');
 
+const wsController = require('./controllers/websocket');
+
 const errorController = require('./controllers/error');
 
 const ApplicationError = require('../libs/application-error');
@@ -40,7 +43,24 @@ mongoose.Promise = global.Promise;
 	await migrator();
 
 	const app = new Koa();
-	const wsApp = websockify(new Koa());
+	const wsApp = websockify(
+		new Koa(),
+		{
+			verifyClient: ({req}, done) => {
+				const token = url.parse(req.url, true).path.replace('/ws/', '');
+				if (!token || !token.length) {
+					done(false, 401);
+				}
+				req.token = token;
+				done(true);
+			},
+			origin: 'https://localhost:3000',
+		},
+		{
+			key: fs.readFileSync('fixtures/key.key'),
+			cert: fs.readFileSync('fixtures/cert.crt')
+		}
+	);
 
 	function getView(viewId) {
 		const viewPath = path.resolve(__dirname, 'views', `${viewId}.server.js`);
@@ -60,13 +80,12 @@ mongoose.Promise = global.Promise;
 		};
 	}
 
-	//Запустим wsServes
-	wsApp.ws.use(router.all('/ws', (ctx) => {
-		ctx.websocket.on('message', (message) => {
-			ctx.websocket.send(message);
-			console.log('onmessage', message);
-		});
-	}).routes());
+	// Запустим wsServes
+	wsApp.ws.use(router.all('/:uId', wsController).routes());
+	// wsApp.use(router.get('/', (ctx) => {
+	// 	ctx.status = 200;
+	// 	ctx.body = 'Success';
+	// }).routes());
 
 	// Сохраним параметр id в ctx.params.id
 	router.param('id', (id, ctx, next) => next());
@@ -123,7 +142,7 @@ mongoose.Promise = global.Promise;
 		store: new MongooseStore()
 	})));
 
-	process.env.HOSTNAME = "https://127.0.0.1:3000";
+	process.env.HOSTNAME = "https://localhost:3000";
 	// authentication
 	require('../libs/auth');
 	const passport = require('koa-passport');
@@ -179,6 +198,7 @@ mongoose.Promise = global.Promise;
 			.listen(LISTEN_PORT, listenCallback);
 	}
 
+	module.exports = wsApp;
 	module.exports = app;
 })();
 

@@ -37,6 +37,7 @@
     "prop-types": "^15.5.10",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "reconnecting-websocket": "^3.2.2",
     "serialize-javascript": "^1.4.0",
     "supertest": "^3.0.0"
   },
@@ -60,6 +61,7 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.3.0",
     "extract-text-webpack-plugin": "^3.0.1",
+    "html5-websocket": "^2.0.1",
     "ignore-loader": "^0.1.2",
     "jest": "^21.2.1",
     "koa-websocket": "^4.1.0",
