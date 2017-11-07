@@ -246,6 +246,7 @@ class App extends Component {
 		return (
 			<Wallet>
 				<CardsBar
+					isOffline={isOffline}
 					activeCardIndex={activeCard ? activeCardIndex : null}
 					removeCardId={removeCardId}
 					cardsList={cardsList}

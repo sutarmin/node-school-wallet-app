@@ -41,7 +41,7 @@ const Footer = styled.footer`
 
 const CardsBar = ({
 	activeCardIndex, cardsList, onCardChange, onEditChange, isCardsEditable, isCardRemoving, onChangeBarMode,
-	removeCardId, deleteCard, onAppendModeSwitch
+	removeCardId, deleteCard, onAppendModeSwitch, isOffline
 }) => {
 	const onCardClick = (index) => {
 		onCardChange && onCardChange(index);
@@ -64,9 +64,9 @@ const CardsBar = ({
 		<Layout>
 			<Logo />
 			{
-				activeCardIndex !== null
-				? <Edit onClick={onEditChange} editable={isCardsEditable} /> 
-				: null
+				!isOffline && activeCardIndex !== null
+					? <Edit onClick={onEditChange} editable={isCardsEditable} /> 
+					: null
 			}
 			<CardsList>
 				{cardsList
@@ -81,7 +81,11 @@ const CardsBar = ({
 							onClick={() => onCardClick(index)} />
 					))
 				}
-				<Card type='new' onAppendModeSwitch={onAppendModeSwitch} />
+				{
+					!isOffline
+						? <Card type='new' onAppendModeSwitch={onAppendModeSwitch} />
+						: null
+				}
 			</CardsList>
 			<Footer>Yamoney Node School</Footer>
 		</Layout>
@@ -96,7 +100,8 @@ CardsBar.propTypes = {
 	isCardsEditable: PropTypes.bool.isRequired,
 	isCardRemoving: PropTypes.bool.isRequired,
 	deleteCard: PropTypes.func.isRequired,
-	onChangeBarMode: PropTypes.func.isRequired
+	onChangeBarMode: PropTypes.func.isRequired,
+	isOffline: PropTypes.bool.isRequired
 };
 
 export default CardsBar;
