@@ -210,7 +210,7 @@ class App extends Component {
 		} = this.state;
 		const activeCard = cardsList[activeCardIndex];
 
-		let inactiveCardsList, 
+		let inactiveCardsList,
 			filteredHistory,
 			workspace;
 		if (activeCard) {

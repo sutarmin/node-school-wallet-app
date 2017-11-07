@@ -79,6 +79,10 @@ class Withdraw extends Component {
 
 		const {name, value} = event.target;
 
+		if (!/^(\d)+$/.test(value)) {
+			return;
+		}
+
 		this.setState({
 			[name]: value
 		});
@@ -93,11 +97,11 @@ class Withdraw extends Component {
 			event.preventDefault();
 		}
 
-		const {selectedCard, sum} = this.state;
+		const {cardNumber, sum} = this.state;
 		const {activeCard, isOffline} = this.props;
 		if (isOffline) {
 			return;
-		}
+    }
 		const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
 		if (!isNumber || sum <= 0) {
 			return;
@@ -107,14 +111,16 @@ class Withdraw extends Component {
 			method: 'post',
 			url: `/cards/${activeCard.id}/transfer`,
 			data: {
-				target: selectedCard.id,
+				target: cardNumber,
 				sum
 			}
 		};
 
 		axios(options).then(() => {
 			this.props.onTransaction();
-			this.setState({sum: 0});
+			this.setState({
+				sum: 0
+			});
 		});
 	}
 
@@ -131,7 +137,7 @@ class Withdraw extends Component {
 					<WithdrawTitle>Вывести деньги на карту</WithdrawTitle>
 					<CardNumberInput
 						initialValue={this.state.cardNumber}
-						onChange={(newCardNumber) => this.onCardNumberChange(newCardNumber)}/>
+						onChange={(newCardNumber) => this.onCardNumberChange(newCardNumber)} />
 					<InputField>
 						<SumInput
 							name='sum'
