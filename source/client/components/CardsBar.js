@@ -16,6 +16,16 @@ const Logo = styled.div`
 	height: 28px;
 	margin-bottom: 55px;
 	background-image: url('/assets/yamoney-logo.svg');
+
+	&:after {
+		display: ${({isOffline}) => (isOffline ? 'block' : 'none')};
+		content: 'Offline';
+		font-size: 25px;
+		color: white;
+		position: absolute;
+		top: 16px;
+		right: 56px;
+	}
 `;
 
 const Edit = styled.div`
@@ -62,7 +72,7 @@ const CardsBar = ({
 
 	return (
 		<Layout>
-			<Logo />
+			<Logo isOffline={isOffline} />
 			{
 				!isOffline && activeCardIndex !== null
 					? <Edit onClick={onEditChange} editable={isCardsEditable} /> 
