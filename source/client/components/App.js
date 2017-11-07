@@ -209,7 +209,7 @@ class App extends Component {
 		} = this.state;
 		const activeCard = cardsList[activeCardIndex];
 
-		let inactiveCardsList, 
+		let inactiveCardsList,
 			filteredHistory,
 			workspace;
 		if (activeCard) {
@@ -226,7 +226,7 @@ class App extends Component {
 						onCardChange={(newActiveCardIndex) => this.onCardChange(newActiveCardIndex)}
 						onTransaction={() => this.onTransaction()} />
 					<MobilePayment activeCard={activeCard} onTransaction={() => this.onTransaction()} />
-					<Withdraw />
+					<Withdraw activeCard={activeCard} onTransaction={() => this.onTransaction()} />
 				</Workspace>
 			);
 		}

@@ -107,6 +107,10 @@ class PrepaidContract extends Component {
 
 		const {name, value} = event.target;
 
+		if (!/^(\d)+$/.test(value)) {
+			return;
+		}
+
 		this.setState({
 			[name]: value
 		});

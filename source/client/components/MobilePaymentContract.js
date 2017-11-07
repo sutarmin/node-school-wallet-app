@@ -79,7 +79,7 @@ class MobilePaymentContract extends Component {
 		super(props);
 
 		this.state = {
-			phoneNumber: '+79218908064',
+			phoneNumber: '+79219998881',
 			sum: 0,
 			commission: 3
 		};
@@ -118,6 +118,9 @@ class MobilePaymentContract extends Component {
 		}
 
 		const {name, value} = event.target;
+		if (!/^(\d)+$/.test(value)) {
+			return;
+		}
 
 		this.setState({
 			[name]: value
